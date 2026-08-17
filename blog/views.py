@@ -77,5 +77,5 @@ class AddArticleView(APIView):
             instance = serializer.save()
             instance.status = True
             instance.save()
-            return Response(serializer.data)
+            return Response({"response": "Added Successfully"})
         return Response(serializer.errors)
