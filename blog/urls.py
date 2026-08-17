@@ -8,4 +8,5 @@ urlpatterns = [
     path('ser', views.SerializerView.as_view(), name='ser'),
     path('articles', views.ArticleListView.as_view(), name='articles'),
     path('articles/<int:pk>', views.ArticleDetailView.as_view(), name='detail'),
+    path('articles/add', views.AddArticleView.as_view(), name='add'),
 ]

@@ -1,6 +1,6 @@
 from django.contrib.sites import requests
 from django.shortcuts import render
-from rest_framework import response
+from rest_framework import response, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -68,3 +68,14 @@ class ArticleDetailView(APIView):
         instance = Article.objects.get(id=pk)
         serializer = ArticleSerializer(instance)
         return Response(data=serializer.data)
+
+
+class AddArticleView(APIView):
+    def post(self, request):
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            instance.status = True
+            instance.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
