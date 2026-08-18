@@ -78,3 +78,11 @@ class AddArticleView(APIView):
             return Response({"response": "Added Successfully"})
         return Response(serializer.errors)
 
+class UpdateArticleView(APIView):
+    def put(self, request, pk):
+        instance = Article.objects.get(id=pk)
+        serializer = ArticleSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.update(instance=instance, validated_data=serializer.validated_data)
+            return Response({"response": "Updated Successfully"})
+        return Response(serializer.errors)
