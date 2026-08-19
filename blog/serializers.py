@@ -21,9 +21,32 @@ class UserSerializer(serializers.ModelSerializer):
 #     def create(self, validated_data):
 #         return Article.objects.create(**validated_data)
 
+def check_title(data):
+    if data['title'] == "game":
+        raise serializers.ValidationError({"title":"Game is invalid from function validators"})
+
+class CheckTitle:
+    def __call__(self, data):
+        if data['title'] == "game":
+            raise serializers.ValidationError({"title": "Game is invalid from class based validators"})
+
 class ArticleSerializer(serializers.ModelSerializer):
-    status = serializers.BooleanField(write_only=True)
+    # status = serializers.BooleanField(write_only=True)
     class Meta:
         model = Article
         fields = ('id', 'title','status', 'content')
-        read_only_fields = ['status']
+        validators = [
+            CheckTitle(),
+        ]
+        # read_only_fields = ['status']
+
+    # def validate_title(self, value):
+    #     if value == "game":
+    #         raise serializers.ValidationError("game just for robot no one can use this")
+    #     return value
+
+    # def validate(self, attrs):
+    #     if attrs['title'] == "game" and attrs['status'] == True:
+    #         raise serializers.ValidationError({"status" :"you cant create game content with status True"})
+    #     return attrs
+

@@ -75,8 +75,8 @@ class AddArticleView(APIView):
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"response": "Added Successfully"})
-        return Response(serializer.errors)
+            return Response({"response": "Added Successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateArticleView(APIView):
     def put(self, request, pk):
@@ -84,5 +84,5 @@ class UpdateArticleView(APIView):
         serializer = ArticleSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.update(instance=instance, validated_data=serializer.validated_data)
-            return Response({"response": "Updated Successfully"})
-        return Response(serializer.errors)
+            return Response({"response": "Updated Successfully"},)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
