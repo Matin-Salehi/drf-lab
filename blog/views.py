@@ -1,6 +1,7 @@
 from django.contrib.sites import requests
 from django.shortcuts import render
 from rest_framework import response, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -72,7 +73,7 @@ class ArticleDetailView(APIView):
 
 class AddArticleView(APIView):
     def post(self, request):
-        serializer = ArticleSerializer(data=request.data)
+        serializer = ArticleSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response({"response": "Added Successfully"}, status=status.HTTP_201_CREATED)
@@ -86,3 +87,9 @@ class UpdateArticleView(APIView):
             serializer.update(instance=instance, validated_data=serializer.validated_data)
             return Response({"response": "Updated Successfully"},)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChackToken(APIView):
+    # authentication_classes = [TokenAuthentication]
+    def get(self, request):
+        user = request.user
+        return Response({"name": user.username})

@@ -50,3 +50,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     #         raise serializers.ValidationError({"status" :"you cant create game content with status True"})
     #     return attrs
 
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['user'] = request.user
+        return Article.objects.create(**validated_data)
+
