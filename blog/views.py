@@ -9,6 +9,8 @@ import requests
 from django.contrib.auth.models import User
 from .models import Article
 from .serializers import UserSerializer, ArticleSerializer
+from rest_framework.permissions import IsAuthenticated
+from .permissions import BlockListPermission, IsUserOrReadOnly
 
 
 @api_view(['GET', 'POST'])
@@ -72,6 +74,10 @@ class ArticleDetailView(APIView):
 
 
 class AddArticleView(APIView):
+    permission_classes = [
+        BlockListPermission,
+        IsAuthenticated
+    ]
     def post(self, request):
         serializer = ArticleSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
@@ -80,8 +86,13 @@ class AddArticleView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateArticleView(APIView):
+    permission_classes = [
+        IsAuthenticated,
+        IsUserOrReadOnly
+    ]
     def put(self, request, pk):
         instance = Article.objects.get(id=pk)
+        self.check_object_permissions(request, instance)
         serializer = ArticleSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.update(instance=instance, validated_data=serializer.validated_data)
